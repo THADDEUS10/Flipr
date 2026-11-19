@@ -1,0 +1,53 @@
+/* Design tokens taken from the Figma file (Color/* and TYPOGRAPHY/*) */
+:root {
+  --bg: #f3f3f3;
+  --surface: #ffffff;
+  --surface-container: #e7e7e7;
+  --surface-low: #f3f3f3;
+  --on-bg: #1b1b1b;
+  --on-surface-variant: #515151;
+  --outline: #878787;
+  --outline-variant: #cfcfcf;
+  --primary: #1e4fbc;
+  --primary-container: #d3e0fb;
+  --on-primary: #ffffff;
+  --secondary: #14b8a6;
+  --success: #006600;
+  --success-bg: #cce6cc;
+  --warning: #cc8400;
+  --warning-bg: #fff1d6;
+  --error: #ff2c2c;
+  --error-bg: #ffe3e3;
+  --line: rgba(0, 0, 0, 0.07);
+
+  --font-display: "Bree Serif", Georgia, serif;
+  --font-body: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+:root[data-theme="dark"] {
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --surface-container: #2a2a2a;
+  --surface-low: #181818;
+  --on-bg: #ececec;
+  --on-surface-variant: #b5b5b5;
+  --outline: #8a8a8a;
+  --outline-variant: #3d3d3d;
+  --primary: #6d93f0;
+  --primary-container: #1f3366;
+  --on-primary: #0b1a3d;
+  --success: #7ad37a;
+  --success-bg: #17301a;
+  --warning: #ffb938;
+  --warning-bg: #3a2c10;
+  --error: #ff6b6b;
+  --error-bg: #3a1717;
+  --line: rgba(255, 255, 255, 0.06);
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
