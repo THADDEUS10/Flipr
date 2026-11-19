@@ -2,7 +2,7 @@ import { flipLogoSvg } from "./pdfLogo";
 import { downloadBlob } from "./files";
 import { iconSvg } from "./categoryIcons";
 
-export const SITE_URL = "flipr.app"; // change this to your real website address
+export const SITE_URL = "flipr-convert.pages.dev"; // change this to your real website address
 
 export interface Report {
   categoryLabel: string;
@@ -37,7 +37,7 @@ function iconNode(id: string, size: number): HTMLElement {
 function logoNode(): HTMLElement {
   const img = document.createElement("img");
   img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(flipLogoSvg());
-  img.style.cssText = "width:124px;height:51.5px;display:block;";
+  img.style.cssText = "width:134px;height:52.6px;display:block;";
   return img;
 }
 
