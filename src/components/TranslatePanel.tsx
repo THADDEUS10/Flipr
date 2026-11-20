@@ -3,13 +3,17 @@ import { useAuth } from "../context/AuthContext";
 import { LANGUAGES, MAX_CHARS, describeTranslateError, extractText, languageName, translateText } from "../lib/translate";
 import { downloadTranslationPdf } from "../lib/resultPdf";
 import { formatBytes } from "../lib/files";
+import { describeSpeechError, getRecognizer, speechLocale, type Recognizer } from "../lib/speech";
 import { Dropdown } from "./Dropdown";
 import { AlertIcon, CheckIcon, FileIcon, SwapIcon, UploadIcon } from "./Icons";
 
-type Mode = "text" | "document";
+type Mode = "text" | "document" | "audio";
 type Stage = "idle" | "reading" | "ready" | "working" | "done";
 const DOC_EXT = [".txt", ".docx", ".pdf"];
 const MAX_FILE = 20 * 1024 * 1024;
+const MicIcon = ({ size = 30 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
+);
 const OPTIONS = LANGUAGES.map((l) => ({ id: l.id, label: l.label }));
 
 export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
@@ -33,9 +37,43 @@ export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
   const readerRef = useRef<FileReader | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // audio (microphone) mode
+  const [listening, setListening] = useState(false);
+  const recRef = useRef<Recognizer | null>(null);
+  const baseRef = useRef("");
+  const speechSupported = getRecognizer() !== null;
+
+  function stopListening() {
+    recRef.current?.stop();
+  }
+
+  function startListening() {
+    const Rec = getRecognizer();
+    if (!Rec) return;
+    setError(null);
+    baseRef.current = text.trim() ? text.trim() + " " : "";
+    const rec = new Rec();
+    rec.lang = speechLocale(from);
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.onresult = (e) => {
+      let heard = "";
+      for (let i = 0; i < e.results.length; i++) heard += e.results[i][0].transcript;
+      setText((baseRef.current + heard).slice(0, MAX_CHARS + 50));
+    };
+    rec.onerror = (e) => { setError(describeSpeechError(String(e.error))); };
+    rec.onend = () => { setListening(false); recRef.current = null; };
+    recRef.current = rec;
+    try { rec.start(); setListening(true); } catch { setListening(false); setError(describeSpeechError("unknown")); }
+  }
+
+  // stop listening when you leave the Audio tab, change the spoken language, or close the panel
+  useEffect(() => { recRef.current?.abort(); }, [mode, from]);
+  useEffect(() => () => { recRef.current?.abort(); }, []);
+
   // Live translation while typing (waits a moment after you stop)
   useEffect(() => {
-    if (mode !== "text") return;
+    if (mode === "document") return;
     const q = text.trim();
     setError(null);
     if (q.length < 2) { setTranslated(""); return; }
@@ -57,7 +95,7 @@ export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
 
   function swap() {
     setFrom(to); setTo(from);
-    if (mode === "text" && translated) setText(translated);
+    if (mode !== "document" && translated) setText(translated);
   }
 
   async function copy() {
@@ -120,7 +158,7 @@ export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
         <div className="tabs" role="tablist">
           <button role="tab" aria-selected={mode === "text"} className={`tab${mode === "text" ? " active" : ""}`} onClick={() => setMode("text")}>Text</button>
           <button role="tab" aria-selected={mode === "document"} className={`tab${mode === "document" ? " active" : ""}`} onClick={() => setMode("document")}>Document</button>
-          <button role="tab" className="tab" disabled title="Audio translation is coming later">Audio</button>
+          <button role="tab" aria-selected={mode === "audio"} className={`tab${mode === "audio" ? " active" : ""}`} onClick={() => setMode("audio")}>Audio</button>
         </div>
         <div className="lang-grid">
           <div><span className="field-label">From</span><Dropdown options={OPTIONS} value={from} onChange={setFrom} /></div>
@@ -129,11 +167,29 @@ export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
         </div>
       </div>
 
-      {mode === "text" ? (
+      {mode !== "document" ? (
         <>
+          {mode === "audio" && (
+            <div className="field-block">
+              <span className="field-label">Speak</span>
+              <div className="mic-box">
+                {speechSupported ? (
+                  <>
+                    <button type="button" className={`mic-btn${listening ? " live" : ""}`} onClick={listening ? stopListening : startListening} aria-label={listening ? "Stop listening" : "Start listening"} aria-pressed={listening}>
+                      <MicIcon />
+                    </button>
+                    <span className="mic-status" aria-live="polite">{listening ? "Listening… tap to stop" : "Tap the microphone and speak"}</span>
+                    <span className="mic-note">Your browser’s speech service listens. FLIPR does not record or store your voice.</span>
+                  </>
+                ) : (
+                  <span className="mic-status">Voice input isn’t supported in this browser. Try Chrome, Edge or Safari, or use the Text tab.</span>
+                )}
+              </div>
+            </div>
+          )}
           <div className="field-block">
-            <span className="field-label"><span>Input Text</span><span style={{ fontWeight: 400 }}>{text.length} / {MAX_CHARS}</span></span>
-            <textarea className="textarea" rows={4} placeholder="Enter text to translate" value={text} onChange={(e) => setText(e.target.value)} aria-label="Text to translate" />
+            <span className="field-label"><span>{mode === "audio" ? "What you said" : "Input Text"}</span><span style={{ fontWeight: 400 }}>{text.length} / {MAX_CHARS}</span></span>
+            <textarea className="textarea" rows={4} placeholder={mode === "audio" ? "Your spoken words appear here" : "Enter text to translate"} value={text} onChange={(e) => setText(e.target.value)} aria-label="Text to translate" />
           </div>
           {(translated || busy) && (
             <div className="field-block">
@@ -144,6 +200,14 @@ export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
             </div>
           )}
           {error && <div className="banner error" role="alert"><AlertIcon />{error}</div>}
+          {mode === "audio" && (
+            <div className="field-block">
+              <span className="field-label">Upload Audio File</span>
+              <button type="button" className="file-pick" disabled title="Uploading audio files is coming later">
+                <b>Choose File</b><span>Coming soon</span><span aria-hidden><UploadIcon /></span>
+              </button>
+            </div>
+          )}
           <div className="download-zone">
             {!user && <span>Login/Sign up to download your result</span>}
             <button className="btn btn-primary" onClick={() => void downloadText()} disabled={!translated || busy}>Translate &amp; Download Result</button>

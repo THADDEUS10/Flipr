@@ -396,3 +396,31 @@ a { color: var(--primary); }
 }
 .dd-hint-top { padding: 0 14px 0 10px; }
 .dd-hint:active { transform: scale(0.95); }
+
+/* ---------- Footer links ---------- */
+.footer .rights a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.footer .rights a:hover { color: var(--primary); }
+
+/* ---------- Privacy Policy and Terms pages ---------- */
+.legal { width: 100%; max-width: 760px; margin: 0 auto 24px; padding: 24px; background: var(--surface); border-radius: var(--radius-lg, 24px); box-shadow: var(--shadow-card); }
+.legal h1 { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 38px; margin: 8px 0 4px; color: var(--on-bg); }
+.legal h2 { font-size: 17px; font-weight: 700; margin: 26px 0 8px; color: var(--on-bg); }
+.legal p, .legal li { font-size: 15px; line-height: 24px; color: var(--on-surface-variant); }
+.legal p { margin: 0 0 10px; }
+.legal ul { margin: 0 0 10px; padding-left: 22px; }
+.legal li { margin-bottom: 6px; }
+.legal-date { font-size: 13px !important; opacity: 0.85; margin-bottom: 14px !important; }
+.legal-back { display: inline-block; font-size: 14px; font-weight: 600; text-decoration: none; color: var(--primary); }
+.legal-back:hover { text-decoration: underline; }
+@media (max-width: 600px) { .legal { padding: 18px; } .legal h1 { font-size: 26px; line-height: 34px; } }
+
+/* ---------- Audio tab (microphone) ---------- */
+.mic-box { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 12px; background: var(--surface); border-radius: var(--radius-md); text-align: center; }
+.mic-btn { width: 76px; height: 76px; border: 0; border-radius: 50%; display: grid; place-items: center; cursor: pointer; background: var(--primary); color: #fff; transition: transform 0.15s ease, background-color 0.15s ease; }
+.mic-btn:hover { transform: scale(1.05); }
+.mic-btn.live { background: #d93025; animation: mic-pulse 1.4s ease-out infinite; }
+@keyframes mic-pulse { 0% { box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.5); } 100% { box-shadow: 0 0 0 20px rgba(217, 48, 37, 0); } }
+.mic-status { font-size: 14px; font-weight: 600; color: var(--on-bg); }
+.mic-note { font-size: 11px; color: var(--on-surface-variant); }
+.file-pick:disabled { opacity: 0.55; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) { .mic-btn.live { animation: none; } }

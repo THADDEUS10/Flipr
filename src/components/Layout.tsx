@@ -72,7 +72,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </header>
       <main className="main">{children}</main>
       <footer className="footer">
-        <span>All rights reserved ©{new Date().getFullYear()}</span>
+        <span className="rights">All rights reserved ©{new Date().getFullYear()} · <Link to="/privacy">Privacy</Link> · <Link to="/terms">Terms</Link></span>
         <div className="credit">
           <span>{TEAM.map((m, i) => `${i > 0 ? " · " : ""}${m.role} ${m.name}`).join("")}</span>
           <div className="avatars">{TEAM.map((m) => <Avatar key={m.id} member={m} />)}</div>
