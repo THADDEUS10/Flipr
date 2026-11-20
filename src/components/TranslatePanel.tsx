@@ -6,6 +6,8 @@ import { formatBytes } from "../lib/files";
 import { describeSpeechError, getRecognizer, speechLocale, type Recognizer } from "../lib/speech";
 import { Dropdown } from "./Dropdown";
 import { AlertIcon, CheckIcon, FileIcon, SwapIcon, UploadIcon } from "./Icons";
+import { usePremium } from "../context/PremiumContext";
+import { DownloadNote } from "./DownloadNote";
 
 type Mode = "text" | "document" | "audio";
 type Stage = "idle" | "reading" | "ready" | "working" | "done";
@@ -18,6 +20,7 @@ const OPTIONS = LANGUAGES.map((l) => ({ id: l.id, label: l.label }));
 
 export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
   const { user } = useAuth();
+  const { requestDownload } = usePremium();
   const [mode, setMode] = useState<Mode>("text");
   const [from, setFrom] = useState("en");
   const [to, setTo] = useState("es");
@@ -105,6 +108,7 @@ export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
   async function downloadText() {
     if (!user) { onNeedLogin(); return; }
     if (!translated) return;
+    if (!(await requestDownload())) return;
     setBusy(true);
     try {
       await downloadTranslationPdf({ fromLabel: languageName(from), toLabel: languageName(to), original: text.trim(), translated, fileName: `flipr-translation-${from}-to-${to}.pdf` });
@@ -135,6 +139,7 @@ export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
   async function translateDocument() {
     if (!file) return;
     if (!user) { onNeedLogin(); return; }
+    if (!(await requestDownload())) return;
     setStage("working"); setError(null); setSummary(null);
     try {
       const original = (await extractText(file)).trim();
@@ -210,6 +215,7 @@ export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
           )}
           <div className="download-zone">
             {!user && <span>Login/Sign up to download your result</span>}
+            {user && <DownloadNote />}
             <button className="btn btn-primary" onClick={() => void downloadText()} disabled={!translated || busy}>Translate &amp; Download Result</button>
             <span style={{ fontSize: 10 }}>Free machine translation, with a daily limit. Check important text yourself.</span>
           </div>
@@ -247,6 +253,7 @@ export function TranslatePanel({ onNeedLogin }: { onNeedLogin: () => void }) {
           {summary && <div className="banner success" role="status">{summary}</div>}
           <div className="download-zone">
             {!user && <span>Login/Sign up to download your result</span>}
+            {user && <DownloadNote />}
             <button className="btn btn-primary" onClick={() => void translateDocument()} disabled={!file || stage === "reading" || stage === "working"}>
               {stage === "working" ? "Translating…" : "Translate & Download Result"}
             </button>

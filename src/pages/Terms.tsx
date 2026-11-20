@@ -41,8 +41,11 @@ const sections: LegalSection[] = [
     paragraphs: ["You keep ownership of your files and anything you type into FLIPR. Your files are processed on your device and are not uploaded to us. You are responsible for having the right to use them."]
   },
   {
-    heading: "Free service and future paid plans",
-    paragraphs: ["FLIPR is free to use at the moment. We may add paid plans or features later. If we do, we will tell you clearly before you are charged anything, and these Terms will be updated."]
+    heading: "Free downloads and paid plans",
+    paragraphs: [
+      "FLIPR is free to use. We plan to give each account 3 free downloads, after which unlimited downloads will need a paid plan: $2 per month or $20 per year. We will tell you clearly before you are charged anything.",
+      "Payments are handled by Paystack. A plan is a one-off payment for one month or one year and does not renew by itself. If something goes wrong with a payment, contact us."
+    ]
   },
   {
     heading: "Ownership",

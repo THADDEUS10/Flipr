@@ -3,6 +3,8 @@ import { zipSync } from "fflate";
 import { useAuth } from "../context/AuthContext";
 import { downloadBlob, formatBytes } from "../lib/files";
 import { AlertIcon, CheckIcon, FileIcon, UploadIcon } from "./Icons";
+import { usePremium } from "../context/PremiumContext";
+import { DownloadNote } from "./DownloadNote";
 
 type Stage = "idle" | "reading" | "ready" | "working" | "done";
 const MAX_BYTES = 100 * 1024 * 1024;
@@ -27,6 +29,7 @@ async function compressImage(file: File): Promise<{ blob: Blob; name: string }> 
 
 export function CompressPanel({ onNeedLogin }: { onNeedLogin: () => void }) {
   const { user } = useAuth();
+  const { requestDownload } = usePremium();
   const [file, setFile] = useState<File | null>(null);
   const [stage, setStage] = useState<Stage>("idle");
   const [pct, setPct] = useState(0);
@@ -58,6 +61,7 @@ export function CompressPanel({ onNeedLogin }: { onNeedLogin: () => void }) {
   async function compress() {
     if (!file || !bufRef.current) return;
     if (!user) { onNeedLogin(); return; }
+    if (!(await requestDownload())) return;
     setStage("working"); setError(null); setSummary(null);
     try {
       let blob: Blob;
@@ -120,6 +124,7 @@ export function CompressPanel({ onNeedLogin }: { onNeedLogin: () => void }) {
 
       <div className="download-zone">
         {!user && <span>Login/Sign up to download your result</span>}
+        {user && <DownloadNote />}
         <button className="btn btn-primary" onClick={() => void compress()} disabled={!file || stage === "reading" || stage === "working"}>
           {stage === "working" ? "Compressing…" : "Compress & Download Result"}
         </button>

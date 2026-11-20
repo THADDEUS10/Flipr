@@ -4,9 +4,12 @@ import jsQR from "jsqr";
 import { useAuth } from "../context/AuthContext";
 import { downloadDataUrl } from "../lib/files";
 import { AlertIcon } from "./Icons";
+import { usePremium } from "../context/PremiumContext";
+import { DownloadNote } from "./DownloadNote";
 
 export function QrPanel({ onNeedLogin }: { onNeedLogin: () => void }) {
   const { user } = useAuth();
+  const { requestDownload } = usePremium();
 
   // ---- Generate ----
   const [text, setText] = useState("");
@@ -25,8 +28,9 @@ export function QrPanel({ onNeedLogin }: { onNeedLogin: () => void }) {
     }
   }
 
-  function download() {
+  async function download() {
     if (!user) { onNeedLogin(); return; }
+    if (!(await requestDownload())) return;
     if (qrUrl) downloadDataUrl(qrUrl, "flipr-qr-code.png");
   }
 
@@ -125,6 +129,7 @@ export function QrPanel({ onNeedLogin }: { onNeedLogin: () => void }) {
           <>
             <img className="qr-img" src={qrUrl} alt="Generated QR code" />
             {!user && <span className="guest-note">Login/Sign up to download your QR code</span>}
+        {user && <DownloadNote />}
             <button className="btn btn-soft" onClick={download}>Download</button>
           </>
         )}

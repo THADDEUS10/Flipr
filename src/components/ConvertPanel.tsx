@@ -6,6 +6,8 @@ import { downloadResultPdf, type Report } from "../lib/resultPdf";
 import { addHistory } from "../lib/history";
 import { useAuth } from "../context/AuthContext";
 import { ClearIcon, ConvertGlyphIcon, SwapIcon, WarningFilledIcon } from "./Icons";
+import { usePremium } from "../context/PremiumContext";
+import { DownloadNote } from "./DownloadNote";
 
 interface Result { value: number; steps: string[] }
 
@@ -13,6 +15,7 @@ interface Initial { from: string; to: string; amount: string }
 
 export function ConvertPanel({ category, onNeedLogin, initial }: { category: Category; onNeedLogin: () => void; initial?: Initial }) {
   const { user } = useAuth();
+  const { requestDownload } = usePremium();
   const isCurrency = category.kind === "currency";
   const unitCodes = isCurrency ? [...POPULAR_CURRENCIES].sort((a, b) => a.localeCompare(b)) : category.units.map((u) => u.code);
 
@@ -111,6 +114,7 @@ export function ConvertPanel({ category, onNeedLogin, initial }: { category: Cat
   async function download() {
     if (!user) { onNeedLogin(); return; }
     if (!result || parsed === null) return;
+    if (!(await requestDownload())) return;
     setBusy(true); setPdfError(null);
     try {
       await downloadResultPdf(buildReport(parsed, result.value, result.steps));
@@ -166,6 +170,7 @@ export function ConvertPanel({ category, onNeedLogin, initial }: { category: Cat
 
       <div className="download-zone">
         {!user && <span>Login/Sign up to download your result</span>}
+        {user && <DownloadNote />}
         <button className="btn btn-primary" onClick={() => void download()} disabled={(!!user && !result) || busy}>{busy ? "Preparing PDF…" : "Download Result"}</button>
       </div>
     </>

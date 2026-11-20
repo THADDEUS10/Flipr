@@ -15,6 +15,7 @@ const sections: LegalSection[] = [
     bullets: [
       "Account details: your name, email address and password, when you create an account. Your password is stored in scrambled (hashed) form by our sign-in provider, so we cannot read it.",
       "Conversion history: when you are signed in and tap Download Result, we save the type of conversion, the units, the amount, the result, whether you bookmarked it, and the date and time, so it appears in your History.",
+      "Plan and payment records: if you buy a plan, we keep which plan you chose, when it ends, a payment reference, and how many free downloads you have used. You pay on Paystack's own page, so your card details never reach us.",
       "Technical data: like most websites, the companies that host and deliver FLIPR may see your IP address, browser type and the pages requested, in their server logs.",
       "Data kept on your device: your light or dark mode choice and your sign-in session are stored in your browser."
     ]
@@ -46,6 +47,7 @@ const sections: LegalSection[] = [
       "ExchangeRate-API (open.er-api.com): supplies currency exchange rates. Your browser asks it for rates for a base currency, so it can see your IP address.",
       "MyMemory (translated.net): translates text. The text you type to translate, and the chosen languages, are sent to it.",
       "Your browser's speech service: only if you use the microphone. It receives your speech to turn it into text, under its own privacy policy.",
+      "Paystack: processes payments if you buy a plan. It receives your email address and the payment details you enter on its page.",
       "Google Fonts: supplies the app's fonts, so your IP address is shared with Google when the fonts load."
     ],
     after: ["Please do not type passwords, bank details or other sensitive information into the translator."]

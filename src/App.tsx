@@ -7,9 +7,12 @@ import ResetPassword from "./pages/ResetPassword";
 import History from "./pages/History";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Premium from "./pages/Premium";
+import { PremiumProvider } from "./context/PremiumContext";
 
 export default function App() {
   return (
+    <PremiumProvider>
     <Layout>
       <Routes>
         <Route path="/" element={<Landing />} />
@@ -19,8 +22,10 @@ export default function App() {
         <Route path="/history" element={<History />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/premium" element={<Premium />} />
         <Route path="*" element={<Landing />} />
       </Routes>
     </Layout>
+    </PremiumProvider>
   );
 }

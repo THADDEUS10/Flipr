@@ -424,3 +424,10 @@ a { color: var(--primary); }
 .mic-note { font-size: 11px; color: var(--on-surface-variant); }
 .file-pick:disabled { opacity: 0.55; cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) { .mic-btn.live { animation: none; } }
+
+/* ---------- Premium page ---------- */
+.premium-page .plan-switch { display: flex; gap: 8px; margin: 14px 0 6px; }
+.premium-page .plan-switch .tab { flex: 1; }
+.premium-page .plan-price { font-size: 17px; margin: 14px 0 6px; }
+.premium-page .plan-price b { font-size: 38px; font-family: var(--font-display); font-weight: 400; color: var(--on-bg); }
+.premium-active { padding: 10px 12px; border-radius: 12px; background: var(--surface-container); }
