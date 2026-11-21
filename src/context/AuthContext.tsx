@@ -15,6 +15,8 @@ interface AuthCtx {
   signUp: (name: string, email: string, password: string) => Promise<string | null>;
   signInWithGoogle: () => Promise<string | null>;
   signOut: () => Promise<void>;
+  /** Permanently deletes the signed-in account. Returns an error message, or null on success. */
+  deleteAccount: () => Promise<string | null>;
   requestReset: (email: string) => Promise<string | null>;
   verifyReset: (email: string, code: string) => Promise<string | null>;
   setNewPassword: (password: string) => Promise<string | null>;
@@ -90,6 +92,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const deleteAccount = useCallback(async () => {
+    if (!supabase) {
+      // Demo mode: remove the demo user and this browser's saved history
+      try {
+        const email = (JSON.parse(localStorage.getItem(DEMO_KEY) ?? "null") as AppUser | null)?.email;
+        if (email) localStorage.removeItem(`flipr_history_${email.toLowerCase()}`);
+        localStorage.removeItem(DEMO_KEY);
+      } catch { /* ignore */ }
+      setUser(null);
+      return null;
+    }
+    const { error } = await supabase.rpc("delete_my_account");
+    if (error) return "We couldn’t delete your account right now. Please try again, or email us.";
+    await supabase.auth.signOut({ scope: "local" }); // the account is gone, so just clear this device
+    return null;
+  }, []);
+
   const requestReset = useCallback(async (email: string) => {
     if (!supabase) return null;
     const { error } = await supabase.auth.resetPasswordForEmail(email);
@@ -109,8 +128,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AuthCtx>(
-    () => ({ user, loading, isDemo: isDemoMode, signIn, signUp, signInWithGoogle, signOut, requestReset, verifyReset, setNewPassword }),
-    [user, loading, signIn, signUp, signInWithGoogle, signOut, requestReset, verifyReset, setNewPassword]
+    () => ({ user, loading, isDemo: isDemoMode, signIn, signUp, signInWithGoogle, signOut, deleteAccount, requestReset, verifyReset, setNewPassword }),
+    [user, loading, signIn, signUp, signInWithGoogle, signOut, deleteAccount, requestReset, verifyReset, setNewPassword]
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -62,7 +62,7 @@ const sections: LegalSection[] = [
   },
   {
     heading: "How long we keep your data",
-    paragraphs: ["We keep your account and history until you delete them or ask us to delete them. You can delete individual history entries yourself in the History page at any time. If you ask us to delete your account, we will remove your account and your saved history, except where the law requires us to keep something."]
+    paragraphs: ["We keep your account and history until you delete them. You can delete individual history entries yourself in the History page at any time, and you can delete your whole account yourself: open the account menu and choose Delete account. This removes your account and your saved history straight away, except where the law requires us to keep something."]
   },
   {
     heading: "Your rights",
@@ -76,7 +76,7 @@ const sections: LegalSection[] = [
       "ask for your data in a portable format; and",
       "complain to the Nigeria Data Protection Commission (NDPC) if you are not happy with how we handle your data."
     ],
-    after: [`To use any of these rights, including deleting your account, email us at ${CONTACT_EMAIL} from the address you signed up with. We aim to reply within 30 days.`]
+    after: [`You can delete your account yourself from the account menu (Delete account). For any other request, email us at ${CONTACT_EMAIL} from the address you signed up with. We aim to reply within 30 days.`]
   },
   {
     heading: "Security",

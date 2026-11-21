@@ -431,3 +431,8 @@ a { color: var(--primary); }
 .premium-page .plan-price { font-size: 17px; margin: 14px 0 6px; }
 .premium-page .plan-price b { font-size: 38px; font-family: var(--font-display); font-weight: 400; color: var(--on-bg); }
 .premium-active { padding: 10px 12px; border-radius: 12px; background: var(--surface-container); }
+
+/* ---------- Delete account confirmation ---------- */
+.confirm-input { padding: 12px 14px; border: 1px solid var(--input-border, #ddd); border-radius: var(--radius-md); background: var(--surface); color: var(--on-bg); font-size: 16px; letter-spacing: 1px; }
+.confirm-input:focus { outline: 2px solid var(--secondary); outline-offset: 1px; }
+.btn-red:disabled { opacity: 0.45; cursor: not-allowed; }

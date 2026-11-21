@@ -5,9 +5,10 @@ import { useTheme } from "../context/ThemeContext";
 import { Avatar } from "./Avatar";
 import { TEAM } from "../lib/team";
 import { FlipLogo } from "./FlipLogo";
-import { HistoryIcon, LogoutIcon, MoonIcon, SunIcon, UserIcon, ChevronDownIcon } from "./Icons";
+import { DeleteAccountModal } from "./DeleteAccountModal";
+import { HistoryIcon, LogoutIcon, TrashIcon, MoonIcon, SunIcon, UserIcon, ChevronDownIcon } from "./Icons";
 
-function UserMenu() {
+function UserMenu({ onDelete }: { onDelete: () => void }) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -38,6 +39,9 @@ function UserMenu() {
           <button className="menu-item danger" role="menuitem" onClick={async () => { await signOut(); setOpen(false); navigate("/"); }}>
             <span style={{ display: "flex", gap: 8, alignItems: "center" }}><LogoutIcon /> Logout</span>
           </button>
+          <button className="menu-item danger" role="menuitem" onClick={() => { setOpen(false); onDelete(); }}>
+            <span style={{ display: "flex", gap: 8, alignItems: "center" }}><TrashIcon /> Delete account</span>
+          </button>
         </div>
       )}
     </div>
@@ -55,6 +59,7 @@ function BgLines() {
 export function Layout({ children }: { children: ReactNode }) {
   const { theme, toggle } = useTheme();
   const [rolled, setRolled] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   return (
     <div className="shell">
       <BgLines />
@@ -67,7 +72,7 @@ export function Layout({ children }: { children: ReactNode }) {
               <span className="roll-sun"><SunIcon /></span>
             </span>
           </button>
-          <UserMenu />
+          <UserMenu onDelete={() => setShowDelete(true)} />
         </div>
       </header>
       <main className="main">{children}</main>
@@ -78,6 +83,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <div className="avatars">{TEAM.map((m) => <Avatar key={m.id} member={m} />)}</div>
         </div>
       </footer>
+      {showDelete && <DeleteAccountModal onClose={() => setShowDelete(false)} />}
     </div>
   );
 }
